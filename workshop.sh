@@ -11,7 +11,7 @@ check_presence() {
 }
 
 ensure_brew_is_installed() {
-  if ! check_presence 'brew2' ; then
+  if ! check_presence 'brew' ; then
     echo "Ops! We need brew installed =("
     echo "Please execute the following command and try again:"
     echo '  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
