@@ -4,7 +4,7 @@ set -e
 
 FILESERVER_IP='10.72.20.240'
 FILESERVER_BOX_URL="$FILESERVER_IP:8000/package.box"
-GCE_BOX_URL="missing"
+GCE_BOX_URL="https://storage.googleapis.com/go-workshop/package.box"
 
 check_presence() {
   [[ -n `which $1` ]]
