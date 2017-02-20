@@ -1,10 +1,10 @@
 #!/bin/bash
-
 set -e
 
 FILESERVER_IP='10.72.20.240'
 FILESERVER_BOX_URL="$FILESERVER_IP:8000/package.box"
 GCE_BOX_URL="https://storage.googleapis.com/go-workshop/package.box"
+BOX_MD5='799e7e7d7be07d138b6685fcd6b467a5'
 
 check_presence() {
   [[ -n `which $1` ]]
@@ -52,7 +52,20 @@ add_box_to_vagrant() {
   vagrant box add /tmp/package.box --name gocd/2016-workshop
 }
 
-add_box() {
+box_is_added() {
+  [[ `vagrant box list | grep gocd/2016-workshop` ]]
+}
+
+box_already_downloaded() {
+  [[ -f /tmp/package.box && `md5 -q /tmp/package.box` == $BOX_MD5 ]]
+}
+
+download_box() {
+  if box_already_downloaded ; then
+    echo "Box alread downloaded!"
+    return 0
+  fi
+
   if fileserver_is_up ; then
     echo "File server is up, uhuuul!"
     download_box_from $FILESERVER_BOX_URL
@@ -60,8 +73,17 @@ add_box() {
     echo "File server is down, falling back to google cloud =("
     download_box_from $GCE_BOX_URL
   fi
+}
+
+add_box() {
+  if box_is_added ; then
+    echo "Box is already on list!"
+    return 0
+  fi
+  download_box
   add_box_to_vagrant
 }
 
 install_dependencies
 add_box
+echo "All set!"
